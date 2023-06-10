@@ -235,5 +235,5 @@ func (sb *SelectBuilder) Build(initialArg ...interface{}) (sql string, args []in
 
 	}
 
-	return sb.args.CompileWithFlavor(buf.String(), initialArg...)
+	return sb.args.Compile(buf.String(), initialArg...)
 }

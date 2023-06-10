@@ -20,7 +20,7 @@ func (cb *compiledBuilder) Build() (sql string, args []interface{}) {
 }
 
 func (cb *compiledBuilder) BuildWithFlavor(initialArg ...interface{}) (sql string, args []interface{}) {
-	return cb.args.CompileWithFlavor(cb.format, initialArg...)
+	return cb.args.Compile(cb.format, initialArg...)
 }
 
 type flavoredBuilder struct {

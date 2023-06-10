@@ -55,13 +55,6 @@ func (args *Args) add(arg interface{}) int {
 //	${name} refers a named argument created by `Named` with `name`.
 //	$$ is a "$" string.
 func (args *Args) Compile(format string, initialValue ...interface{}) (query string, values []interface{}) {
-	return args.CompileWithFlavor(format, initialValue...)
-}
-
-// CompileWithFlavor compiles builder's format to standard sql with flavor and returns associated args.
-//
-// See doc for `Compile` to learn details.
-func (args *Args) CompileWithFlavor(format string, initialValue ...interface{}) (query string, values []interface{}) {
 	buf := &strings.Builder{}
 	idx := strings.IndexRune(format, '$')
 	offset := 0
@@ -177,6 +170,8 @@ func (args *Args) compileArg(buf *strings.Builder, values []interface{}, arg int
 		var s string
 		s, values = a.BuildWithFlavor(values...)
 		buf.WriteString(s)
+	case rawArgs:
+		buf.WriteString(a.expr)
 	case listArgs:
 		if len(a.args) > 0 {
 			values = args.compileArg(buf, values, a.args[0])
