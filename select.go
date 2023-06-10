@@ -1,6 +1,7 @@
 package pgsql
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -113,6 +114,13 @@ func (sb *SelectBuilder) OrderByDesc(col ...string) *SelectBuilder {
 	sb.orderByCols = append(sb.orderByCols, col...)
 	return sb
 }
+
+// BuilderAs returns an AS expression wrapping a complex SQL.
+// According to SQL syntax, SQL built by builder is surrounded by parens.
+func (sb *SelectBuilder) BuilderAs(builder Builder, alias string) string {
+	return fmt.Sprintf("(%s) AS %s", sb.Var(builder), alias)
+}
+
 
 // // Asc sets order of ORDER BY to ASC.
 // func (sb *SelectBuilder) Asc() *SelectBuilder {
