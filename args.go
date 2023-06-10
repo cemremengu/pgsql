@@ -168,7 +168,7 @@ func (args *Args) compileArg(buf *strings.Builder, values []interface{}, arg int
 	switch a := arg.(type) {
 	case Builder:
 		var s string
-		s, values = a.BuildWithFlavor(values...)
+		s, values = a.Build(values...)
 		buf.WriteString(s)
 	case rawArgs:
 		buf.WriteString(a.expr)

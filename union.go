@@ -12,7 +12,7 @@ const (
 
 // NewUnionBuilder creates a new UNION builder.
 func NewUnionBuilder() *UnionBuilder {
-	return NewUnionBuilder()
+	return newUnionBuilder()
 }
 
 func newUnionBuilder() *UnionBuilder {

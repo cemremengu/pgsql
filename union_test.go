@@ -14,7 +14,7 @@ func TestUnion1(t *testing.T) {
 		sb1.GreaterThan("id", 1234),
 	)
 
-	sb2 := newSelectBuilder()
+	sb2 := NewSelectBuilder()
 	sb2.Select("id", "avatar")
 	sb2.From("demo.user_profile")
 	sb2.Where(
@@ -26,6 +26,6 @@ func TestUnion1(t *testing.T) {
 
 	result, args := ub.Build()
 
-	assert.Equal(t, "UPDATE demo.user SET visited = visited + 1 WHERE id = 1234", result)
-	assert.Empty(t, args)
+	assert.Equal(t, "(SELECT id, name, created_at FROM demo.user WHERE id > $1) UNION (SELECT id, avatar FROM demo.user_profile WHERE status IN ($2, $3, $4)) ORDER BY created_at DESC", result)
+	assert.Equal(t, []interface{}{1234, 1, 2, 5}, args)
 }
