@@ -20,10 +20,11 @@ func newInsertBuilder() *InsertBuilder {
 
 // InsertBuilder is a builder to build INSERT.
 type InsertBuilder struct {
-	verb   string
-	table  string
-	cols   []string
-	values [][]string
+	verb      string
+	returning []string
+	table     string
+	cols      []string
+	values    [][]string
 
 	args *Args
 }
@@ -39,35 +40,14 @@ func (ib *InsertBuilder) InsertInto(table string) *InsertBuilder {
 	return ib
 }
 
-// // InsertIgnoreInto sets table name in INSERT IGNORE.
-// func InsertIgnoreInto(table string) *InsertBuilder {
-// 	return DefaultFlavor.NewInsertBuilder().InsertIgnoreInto(table)
-// }
-
-// // InsertIgnoreInto sets table name in INSERT IGNORE.
-// func (ib *InsertBuilder) InsertIgnoreInto(table string) *InsertBuilder {
-// 	ib.args.Flavor.PrepareInsertIgnore(table, ib)
-// 	return ib
-// }
-
-// // ReplaceInto sets table name and changes the verb of ib to REPLACE.
-// // REPLACE INTO is a MySQL extension to the SQL standard.
-// func ReplaceInto(table string) *InsertBuilder {
-// 	return DefaultFlavor.NewInsertBuilder().ReplaceInto(table)
-// }
-
-// ReplaceInto sets table name and changes the verb of ib to REPLACE.
-// REPLACE INTO is a MySQL extension to the SQL standard.
-// func (ib *InsertBuilder) ReplaceInto(table string) *InsertBuilder {
-// 	ib.verb = "REPLACE"
-// 	ib.table = Escape(table)
-// 	ib.marker = insertMarkerAfterInsertInto
-// 	return ib
-// }
-
 // Cols sets columns in INSERT.
 func (ib *InsertBuilder) Cols(col ...string) *InsertBuilder {
 	ib.cols = col
+	return ib
+}
+
+func (ib *InsertBuilder) Returning(col ...string) *InsertBuilder {
+	ib.returning = col
 	return ib
 }
 
@@ -81,12 +61,6 @@ func (ib *InsertBuilder) Values(value ...interface{}) *InsertBuilder {
 
 	ib.values = append(ib.values, placeholders)
 	return ib
-}
-
-// String returns the compiled INSERT string.
-func (ib *InsertBuilder) String() string {
-	s, _ := ib.Build()
-	return s
 }
 
 // BuildWithFlavor returns compiled INSERT string and args with flavor and initial args.
@@ -112,6 +86,11 @@ func (ib *InsertBuilder) Build(initialArg ...interface{}) (sql string, args []in
 	}
 
 	buf.WriteString(strings.Join(values, ", "))
+
+	if len(ib.returning) != 0 {
+		buf.WriteString(" RETURNING ")
+		buf.WriteString(strings.Join(ib.returning, ", "))
+	}
 
 	return ib.args.Compile(buf.String(), initialArg...)
 }

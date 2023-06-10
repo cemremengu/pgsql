@@ -92,12 +92,6 @@ func (ub *UnionBuilder) Offset(offset int) *UnionBuilder {
 	return ub
 }
 
-// String returns the compiled SELECT string.
-func (ub *UnionBuilder) String() string {
-	s, _ := ub.Build()
-	return s
-}
-
 // Build returns compiled SELECT string and args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (ub *UnionBuilder) Build(initialArg ...interface{}) (sql string, args []interface{}) {

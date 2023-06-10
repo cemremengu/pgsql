@@ -27,6 +27,7 @@ type UpdateBuilder struct {
 	Cond
 
 	table       string
+	returning   []string
 	assignments []string
 	whereExprs  []string
 	orderByCols []string
@@ -130,12 +131,6 @@ func (ub *UpdateBuilder) Limit(limit int) *UpdateBuilder {
 	return ub
 }
 
-// String returns the compiled UPDATE string.
-func (ub *UpdateBuilder) String() string {
-	s, _ := ub.Build()
-	return s
-}
-
 // BuildWithFlavor returns compiled UPDATE string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (ub *UpdateBuilder) Build(initialArg ...interface{}) (sql string, args []interface{}) {
@@ -166,6 +161,11 @@ func (ub *UpdateBuilder) Build(initialArg ...interface{}) (sql string, args []in
 		buf.WriteString(" LIMIT ")
 		buf.WriteString(strconv.Itoa(ub.limit))
 
+	}
+
+	if len(ub.returning) != 0 {
+		buf.WriteString(" RETURNING ")
+		buf.WriteString(strings.Join(ub.returning, ", "))
 	}
 
 	return ub.args.Compile(buf.String(), initialArg...)
