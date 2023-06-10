@@ -72,3 +72,29 @@ func TestSelect6(t *testing.T) {
 	assert.Equal(t, "SELECT * FROM demo.user WHERE (x = $1 AND y > $2)", result)
 	assert.Equal(t, []interface{}{2, 1}, args)
 }
+
+func TestSelect7(t *testing.T) {
+	sb := NewSelectBuilder()
+
+	result, args := sb.Select("*").
+		From("demo.user").
+		Where(sb.In("test", List([]int{1, 2}))).
+		Build()
+
+	assert.Equal(t, "SELECT * FROM demo.user WHERE test IN ($1, $2)", result)
+	assert.Equal(t, []interface{}{1, 2}, args)
+}
+
+func TestSelect8(t *testing.T) {
+	sb := NewSelectBuilder()
+
+	result, args := sb.Select("*").
+		From("demo.user").
+		Join("demo.user_profile", "user.id = user_profile.user_id").
+		Where(sb.In("test", List([]int{1, 2}))).
+		Limit(10).
+		Build()
+
+	assert.Equal(t, "SELECT * FROM demo.user JOIN demo.user_profile ON user.id = user_profile.user_id WHERE test IN ($1, $2) LIMIT 10", result)
+	assert.Equal(t, []interface{}{1, 2}, args)
+}

@@ -177,7 +177,15 @@ func (args *Args) compileArg(buf *strings.Builder, values []interface{}, arg int
 		var s string
 		s, values = a.BuildWithFlavor(values...)
 		buf.WriteString(s)
+	case listArgs:
+		if len(a.args) > 0 {
+			values = args.compileArg(buf, values, a.args[0])
+		}
 
+		for i := 1; i < len(a.args); i++ {
+			buf.WriteString(", ")
+			values = args.compileArg(buf, values, a.args[i])
+		}
 	default:
 		fmt.Fprintf(buf, "$%d", len(values)+1)
 

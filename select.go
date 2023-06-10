@@ -5,14 +5,28 @@ import (
 	"strings"
 )
 
+// JoinOption is the option in JOIN.
+type JoinOption string
+
+// Join options.
+const (
+	FullJoin       JoinOption = "FULL"
+	FullOuterJoin  JoinOption = "FULL OUTER"
+	InnerJoin      JoinOption = "INNER"
+	LeftJoin       JoinOption = "LEFT"
+	LeftOuterJoin  JoinOption = "LEFT OUTER"
+	RightJoin      JoinOption = "RIGHT"
+	RightOuterJoin JoinOption = "RIGHT OUTER"
+)
+
 // SelectBuilder is a builder to build SELECT.
 type SelectBuilder struct {
 	Cond
 
-	distinct   bool
-	tables     []string
-	selectCols []string
-	// joinOptions []JoinOption
+	distinct    bool
+	tables      []string
+	selectCols  []string
+	joinOptions []JoinOption
 	joinTables  []string
 	joinExprs   [][]string
 	whereExprs  []string
@@ -75,6 +89,77 @@ func (sb *SelectBuilder) Offset(offset int) *SelectBuilder {
 	return sb
 }
 
+// Having sets expressions of HAVING in SELECT.
+func (sb *SelectBuilder) Having(andExpr ...string) *SelectBuilder {
+	sb.havingExprs = append(sb.havingExprs, andExpr...)
+	return sb
+}
+
+// GroupBy sets columns of GROUP BY in SELECT.
+func (sb *SelectBuilder) GroupBy(col ...string) *SelectBuilder {
+	sb.groupByCols = append(sb.groupByCols, col...)
+	return sb
+}
+
+// OrderBy sets columns of ORDER BY in SELECT.
+func (sb *SelectBuilder) OrderBy(col ...string) *SelectBuilder {
+	sb.order = "ASC"
+	sb.orderByCols = append(sb.orderByCols, col...)
+	return sb
+}
+
+func (sb *SelectBuilder) OrderByDesc(col ...string) *SelectBuilder {
+	sb.order = "DESC"
+	sb.orderByCols = append(sb.orderByCols, col...)
+	return sb
+}
+
+// // Asc sets order of ORDER BY to ASC.
+// func (sb *SelectBuilder) Asc() *SelectBuilder {
+// 	sb.order = "ASC"
+// 	return sb
+// }
+
+// // Desc sets order of ORDER BY to DESC.
+// func (sb *SelectBuilder) Desc() *SelectBuilder {
+// 	sb.order = "DESC"
+// 	return sb
+// }
+
+// Join sets expressions of JOIN in SELECT.
+//
+// It builds a JOIN expression like
+//
+//	JOIN table ON onExpr[0] AND onExpr[1] ...
+func (sb *SelectBuilder) Join(table string, onExpr ...string) *SelectBuilder {
+	return sb.JoinWithOption("", table, onExpr...)
+}
+
+func (sb *SelectBuilder) LeftJoin(table string, onExpr ...string) *SelectBuilder {
+	return sb.JoinWithOption(LeftJoin, table, onExpr...)
+}
+
+// JoinWithOption sets expressions of JOIN with an option.
+//
+// It builds a JOIN expression like
+//
+//	option JOIN table ON onExpr[0] AND onExpr[1] ...
+//
+// Here is a list of supported options.
+//   - FullJoin: FULL JOIN
+//   - FullOuterJoin: FULL OUTER JOIN
+//   - InnerJoin: INNER JOIN
+//   - LeftJoin: LEFT JOIN
+//   - LeftOuterJoin: LEFT OUTER JOIN
+//   - RightJoin: RIGHT JOIN
+//   - RightOuterJoin: RIGHT OUTER JOIN
+func (sb *SelectBuilder) JoinWithOption(option JoinOption, table string, onExpr ...string) *SelectBuilder {
+	sb.joinOptions = append(sb.joinOptions, option)
+	sb.joinTables = append(sb.joinTables, table)
+	sb.joinExprs = append(sb.joinExprs, onExpr)
+	return sb
+}
+
 // BuildWithFlavor returns compiled SELECT string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (sb *SelectBuilder) Build(initialArg ...interface{}) (sql string, args []interface{}) {
@@ -90,21 +175,21 @@ func (sb *SelectBuilder) Build(initialArg ...interface{}) (sql string, args []in
 	buf.WriteString(" FROM ")
 	buf.WriteString(strings.Join(sb.tables, ", "))
 
-	// for i := range sb.joinTables {
-	// 	if option := sb.joinOptions[i]; option != "" {
-	// 		buf.WriteRune(' ')
-	// 		buf.WriteString(string(option))
-	// 	}
+	for i := range sb.joinTables {
+		if option := sb.joinOptions[i]; option != "" {
+			buf.WriteRune(' ')
+			buf.WriteString(string(option))
+		}
 
-	// 	buf.WriteString(" JOIN ")
-	// 	buf.WriteString(sb.joinTables[i])
+		buf.WriteString(" JOIN ")
+		buf.WriteString(sb.joinTables[i])
 
-	// 	if exprs := sb.joinExprs[i]; len(exprs) > 0 {
-	// 		buf.WriteString(" ON ")
-	// 		buf.WriteString(strings.Join(sb.joinExprs[i], " AND "))
-	// 	}
+		if exprs := sb.joinExprs[i]; len(exprs) > 0 {
+			buf.WriteString(" ON ")
+			buf.WriteString(strings.Join(sb.joinExprs[i], " AND "))
+		}
 
-	// }
+	}
 
 	if len(sb.whereExprs) > 0 {
 		buf.WriteString(" WHERE ")
