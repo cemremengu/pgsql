@@ -54,6 +54,22 @@ func (sb *SelectBuilder) From(table ...string) *SelectBuilder {
 	return sb
 }
 
+func (sb *SelectBuilder) Where(andExpr ...string) *SelectBuilder {
+	sb.whereExprs = append(sb.whereExprs, andExpr...)
+	return sb
+}
+
+func (sb *SelectBuilder) Limit(limit int) *SelectBuilder {
+	sb.limit = limit
+	return sb
+}
+
+// Offset sets the LIMIT offset in SELECT.
+func (sb *SelectBuilder) Offset(offset int) *SelectBuilder {
+	sb.offset = offset
+	return sb
+}
+
 // BuildWithFlavor returns compiled SELECT string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (sb *SelectBuilder) Build(initialArg ...interface{}) (sql string, args []interface{}) {
