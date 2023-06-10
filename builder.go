@@ -1,7 +1,4 @@
-// Copyright 2018 Huan Du. All rights reserved.
-// Licensed under the MIT license that can be found in the LICENSE file.
-
-package sqlb
+package pgsql
 
 // Builder is a general SQL builder.
 // It's used by Args to create nested SQL like the `IN` expression in

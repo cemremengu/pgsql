@@ -1,4 +1,4 @@
-package sqlb
+package pgsql
 
 import (
 	"testing"
@@ -16,7 +16,6 @@ func TestSelect1(t *testing.T) {
 
 	assert.Equal(t, "SELECT id, name FROM demo.user WHERE status = 1 LIMIT 10 OFFSET 1", result)
 	assert.Empty(t, args)
-
 }
 
 func TestSelect2(t *testing.T) {
@@ -27,7 +26,6 @@ func TestSelect2(t *testing.T) {
 
 	assert.Equal(t, "SELECT id, name FROM demo.user WHERE status = 1", result)
 	assert.Empty(t, args)
-
 }
 
 func TestSelect3(t *testing.T) {
@@ -37,5 +35,40 @@ func TestSelect3(t *testing.T) {
 
 	assert.Equal(t, "SELECT * FROM demo.user", result)
 	assert.Empty(t, args)
+}
 
+func TestSelect4(t *testing.T) {
+	sb := NewSelectBuilder()
+
+	result, args := sb.Select("*").
+		From("demo.user").
+		Where(sb.Equal("test", 1)).
+		Build()
+
+	assert.Equal(t, "SELECT * FROM demo.user WHERE test = $1", result)
+	assert.Equal(t, []interface{}{1}, args)
+}
+
+func TestSelect5(t *testing.T) {
+	sb := NewSelectBuilder()
+
+	result, args := sb.Select("*").
+		From("demo.user").
+		Where(sb.Expr("test", ">", 1)).
+		Build()
+
+	assert.Equal(t, "SELECT * FROM demo.user WHERE test > $1", result)
+	assert.Equal(t, []interface{}{1}, args)
+}
+
+func TestSelect6(t *testing.T) {
+	sb := NewSelectBuilder()
+
+	result, args := sb.Select("*").
+		From("demo.user").
+		Where(sb.And(sb.E("x", 2), sb.Expr("y", ">", 1))).
+		Build()
+
+	assert.Equal(t, "SELECT * FROM demo.user WHERE (x = $1 AND y > $2)", result)
+	assert.Equal(t, []interface{}{2, 1}, args)
 }

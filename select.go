@@ -1,4 +1,4 @@
-package sqlb
+package pgsql
 
 import (
 	"strconv"
@@ -7,7 +7,7 @@ import (
 
 // SelectBuilder is a builder to build SELECT.
 type SelectBuilder struct {
-	// Cond
+	Cond
 
 	distinct   bool
 	tables     []string
@@ -27,12 +27,17 @@ type SelectBuilder struct {
 	args *Args
 }
 
+// NewSelectBuilder creates a new SELECT builder.
+func NewSelectBuilder() *SelectBuilder {
+	return newSelectBuilder()
+}
+
 func newSelectBuilder() *SelectBuilder {
 	args := &Args{}
 	return &SelectBuilder{
-		// Cond: Cond{
-		// 	Args: args,
-		// },
+		Cond: Cond{
+			Args: args,
+		},
 		limit:  -1,
 		offset: -1,
 		args:   args,

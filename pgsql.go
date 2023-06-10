@@ -1,1 +1,1 @@
-package sqlb
+package pgsql
