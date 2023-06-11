@@ -1,4 +1,4 @@
-module pgsql
+module github.com/cemremengu/pgsql
 
 go 1.20
 
