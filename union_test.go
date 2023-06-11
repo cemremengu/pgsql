@@ -11,7 +11,7 @@ func TestUnion1(t *testing.T) {
 	sb1.Select("id", "name", "created_at")
 	sb1.From("demo.user")
 	sb1.Where(
-		sb1.GreaterThan("id", 1234),
+		sb1.GT("id", 1234),
 	)
 
 	sb2 := NewSelectBuilder()

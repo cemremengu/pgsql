@@ -20,7 +20,7 @@ func (c *Cond) Expr(field string, op string, value interface{}) string {
 }
 
 // Equal represents "field = value".
-func (c *Cond) Equal(field string, value interface{}) string {
+func (c *Cond) EQ(field string, value interface{}) string {
 	buf := &strings.Builder{}
 	buf.WriteString(field)
 	buf.WriteString(" = ")
@@ -28,13 +28,8 @@ func (c *Cond) Equal(field string, value interface{}) string {
 	return buf.String()
 }
 
-// E is an alias of Equal.
-func (c *Cond) E(field string, value interface{}) string {
-	return c.Equal(field, value)
-}
-
 // NotEqual represents "field <> value".
-func (c *Cond) NotEqual(field string, value interface{}) string {
+func (c *Cond) NE(field string, value interface{}) string {
 	buf := &strings.Builder{}
 	buf.WriteString(field)
 	buf.WriteString(" <> ")
@@ -42,13 +37,8 @@ func (c *Cond) NotEqual(field string, value interface{}) string {
 	return buf.String()
 }
 
-// NE is an alias of NotEqual.
-func (c *Cond) NE(field string, value interface{}) string {
-	return c.NotEqual(field, value)
-}
-
 // GreaterThan represents "field > value".
-func (c *Cond) GreaterThan(field string, value interface{}) string {
+func (c *Cond) GT(field string, value interface{}) string {
 	buf := &strings.Builder{}
 	buf.WriteString(field)
 	buf.WriteString(" > ")
@@ -56,13 +46,8 @@ func (c *Cond) GreaterThan(field string, value interface{}) string {
 	return buf.String()
 }
 
-// G is an alias of GreaterThan.
-func (c *Cond) G(field string, value interface{}) string {
-	return c.GreaterThan(field, value)
-}
-
 // GreaterEqualThan represents "field >= value".
-func (c *Cond) GreaterEqualThan(field string, value interface{}) string {
+func (c *Cond) GE(field string, value interface{}) string {
 	buf := &strings.Builder{}
 	buf.WriteString(field)
 	buf.WriteString(" >= ")
@@ -70,13 +55,8 @@ func (c *Cond) GreaterEqualThan(field string, value interface{}) string {
 	return buf.String()
 }
 
-// GE is an alias of GreaterEqualThan.
-func (c *Cond) GE(field string, value interface{}) string {
-	return c.GreaterEqualThan(field, value)
-}
-
 // LessThan represents "field < value".
-func (c *Cond) LessThan(field string, value interface{}) string {
+func (c *Cond) LT(field string, value interface{}) string {
 	buf := &strings.Builder{}
 	buf.WriteString(field)
 	buf.WriteString(" < ")
@@ -84,23 +64,13 @@ func (c *Cond) LessThan(field string, value interface{}) string {
 	return buf.String()
 }
 
-// L is an alias of LessThan.
-func (c *Cond) L(field string, value interface{}) string {
-	return c.LessThan(field, value)
-}
-
 // LessEqualThan represents "field <= value".
-func (c *Cond) LessEqualThan(field string, value interface{}) string {
+func (c *Cond) LE(field string, value interface{}) string {
 	buf := &strings.Builder{}
 	buf.WriteString(field)
 	buf.WriteString(" <= ")
 	buf.WriteString(c.Args.Add(value))
 	return buf.String()
-}
-
-// LE is an alias of LessEqualThan.
-func (c *Cond) LE(field string, value interface{}) string {
-	return c.LessEqualThan(field, value)
 }
 
 // In represents "field IN (value...)".

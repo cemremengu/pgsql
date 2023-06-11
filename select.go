@@ -102,13 +102,21 @@ func (sb *SelectBuilder) GroupBy(col ...string) *SelectBuilder {
 	return sb
 }
 
-// OrderBy sets columns of ORDER BY in SELECT.
-func (sb *SelectBuilder) OrderBy(col ...string) *SelectBuilder {
+// OrderBy sets columns of ORDER BY in SELECT with the provided order.
+func (sb *SelectBuilder) OrderBy(order string, col ...string) *SelectBuilder {
+	sb.order = order
+	sb.orderByCols = append(sb.orderByCols, col...)
+	return sb
+}
+
+// OrderByAsc sets columns of ORDER BY ASC in SELECT.
+func (sb *SelectBuilder) OrderByAsc(col ...string) *SelectBuilder {
 	sb.order = "ASC"
 	sb.orderByCols = append(sb.orderByCols, col...)
 	return sb
 }
 
+// OrderByDesc sets columns of ORDER BY DESC in SELECT.
 func (sb *SelectBuilder) OrderByDesc(col ...string) *SelectBuilder {
 	sb.order = "DESC"
 	sb.orderByCols = append(sb.orderByCols, col...)
@@ -120,7 +128,6 @@ func (sb *SelectBuilder) OrderByDesc(col ...string) *SelectBuilder {
 func (sb *SelectBuilder) BuilderAs(builder Builder, alias string) string {
 	return fmt.Sprintf("(%s) AS %s", sb.Var(builder), alias)
 }
-
 
 // // Asc sets order of ORDER BY to ASC.
 // func (sb *SelectBuilder) Asc() *SelectBuilder {

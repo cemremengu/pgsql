@@ -22,7 +22,7 @@ func TestDelete2(t *testing.T) {
 	db := NewDeleteBuilder()
 	db.DeleteFrom("demo.user")
 	db.Where(
-		db.GreaterThan("id", 1234),
+		db.GT("id", 1234),
 		db.Like("name", "%Du"),
 		db.Or(
 			db.IsNull("id_card"),

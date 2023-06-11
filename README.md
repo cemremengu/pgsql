@@ -1,3 +1,3 @@
 # pgsql
 
-Fat free query builder for PostgreSQL. Ported from [go-sqlbuilder](github.com/huandu/go-sqlbuilder).
+Query builder for PostgreSQL. A fat-free fork of [go-sqlbuilder](github.com/huandu/go-sqlbuilder).

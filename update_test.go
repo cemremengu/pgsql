@@ -29,7 +29,7 @@ func TestUpdate2(t *testing.T) {
 		"modified_at = UNIX_TIMESTAMP(NOW())", // It's allowed to write arbitrary SQL.
 	)
 	ub.Where(
-		ub.GreaterThan("id", 1234),
+		ub.GT("id", 1234),
 		ub.Like("name", "%Du"),
 		ub.Or(
 			ub.IsNull("id_card"),
