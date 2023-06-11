@@ -8,12 +8,8 @@ import (
 
 func TestUpdate1(t *testing.T) {
 	result, args := Update("demo.user").
-		Set(
-			"visited = visited + 1",
-		).
-		Where(
-			"id = 1234",
-		).
+		Set("visited = visited + 1").
+		Where("id = 1234").
 		Build()
 
 	assert.Equal(t, "UPDATE demo.user SET visited = visited + 1 WHERE id = 1234", result)

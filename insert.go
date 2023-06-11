@@ -20,11 +20,13 @@ func newInsertBuilder() *InsertBuilder {
 
 // InsertBuilder is a builder to build INSERT.
 type InsertBuilder struct {
-	verb      string
-	returning []string
-	table     string
-	cols      []string
-	values    [][]string
+	verb        string
+	returning   []string
+	onConflict  []string
+	assignments []string
+	table       string
+	cols        []string
+	values      [][]string
 
 	args *Args
 }
@@ -63,6 +65,28 @@ func (ib *InsertBuilder) Values(value ...interface{}) *InsertBuilder {
 	return ib
 }
 
+// Cols sets columns in INSERT.
+func (ib *InsertBuilder) OnConflict(col ...string) *InsertBuilder {
+	ib.onConflict = col
+	return ib
+}
+
+// Cols sets columns in INSERT.
+func (ib *InsertBuilder) DoUpdate(assignment ...string) *InsertBuilder {
+	ib.assignments = assignment
+	return ib
+}
+
+// Assign represents SET "field = value" in UPDATE.
+func (ub *InsertBuilder) Set(col string) string {
+	return fmt.Sprintf("%s = EXCLUDED.%s", col, col)
+}
+
+// Assign represents SET "field = value" in UPDATE.
+func (ub *InsertBuilder) Assign(field string, value interface{}) string {
+	return fmt.Sprintf("%s = %s", field, ub.args.Add(value))
+}
+
 // BuildWithFlavor returns compiled INSERT string and args with flavor and initial args.
 // They can be used in `DB#Query` of package `database/sql` directly.
 func (ib *InsertBuilder) Build(initialArg ...interface{}) (sql string, args []interface{}) {
@@ -86,6 +110,17 @@ func (ib *InsertBuilder) Build(initialArg ...interface{}) (sql string, args []in
 	}
 
 	buf.WriteString(strings.Join(values, ", "))
+
+	if len(ib.onConflict) != 0 {
+		buf.WriteString(" ON CONFLICT (")
+		buf.WriteString(strings.Join(ib.onConflict, ", "))
+		buf.WriteString(")")
+
+		if len(ib.assignments) != 0 {
+			buf.WriteString(" DO UPDATE SET ")
+			buf.WriteString(strings.Join(ib.assignments, ", "))
+		}
+	}
 
 	if len(ib.returning) != 0 {
 		buf.WriteString(" RETURNING ")
