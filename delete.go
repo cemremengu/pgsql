@@ -25,14 +25,14 @@ func newDeleteBuilder() *DeleteBuilder {
 type DeleteBuilder struct {
 	Cond
 
+	args *Args
+
 	table       string
+	order       string
 	returning   []string
 	whereExprs  []string
 	orderByCols []string
-	order       string
 	limit       int
-
-	args *Args
 }
 
 // DeleteFrom sets table name in DELETE.

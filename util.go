@@ -79,8 +79,8 @@ func List(arg interface{}) interface{} {
 }
 
 type namedArgs struct {
-	name string
 	arg  interface{}
+	name string
 }
 
 // Named creates a named argument.

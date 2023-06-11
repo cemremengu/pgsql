@@ -26,15 +26,15 @@ func newUpdateBuilder() *UpdateBuilder {
 type UpdateBuilder struct {
 	Cond
 
+	args *Args
+
 	table       string
+	order       string
 	returning   []string
 	assignments []string
 	whereExprs  []string
 	orderByCols []string
-	order       string
 	limit       int
-
-	args *Args
 }
 
 // Update sets table name in UPDATE.

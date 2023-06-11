@@ -20,15 +20,14 @@ func newInsertBuilder() *InsertBuilder {
 
 // InsertBuilder is a builder to build INSERT.
 type InsertBuilder struct {
+	args        *Args
 	verb        string
+	table       string
 	returning   []string
 	onConflict  []string
 	assignments []string
-	table       string
 	cols        []string
 	values      [][]string
-
-	args *Args
 }
 
 // InsertInto sets table name in INSERT.
@@ -99,7 +98,6 @@ func (ib *InsertBuilder) Build(initialArg ...interface{}) (sql string, args []in
 		buf.WriteString(" (")
 		buf.WriteString(strings.Join(ib.cols, ", "))
 		buf.WriteString(")")
-
 	}
 
 	buf.WriteString(" VALUES ")

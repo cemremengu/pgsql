@@ -9,9 +9,9 @@ import (
 
 // Args stores arguments associated with a SQL.
 type Args struct {
-	args         []interface{}
 	namedArgs    map[string]int
 	sqlNamedArgs map[string]int
+	args         []interface{}
 	onlyNamed    bool
 }
 

@@ -26,14 +26,13 @@ func newUnionBuilder() *UnionBuilder {
 
 // UnionBuilder is a builder to build UNION.
 type UnionBuilder struct {
+	args        *Args
 	opt         string
+	order       string
 	builders    []Builder
 	orderByCols []string
-	order       string
 	limit       int
 	offset      int
-
-	args *Args
 }
 
 // Union unions all builders together using UNION operator.

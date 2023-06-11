@@ -24,22 +24,23 @@ const (
 type SelectBuilder struct {
 	Cond
 
-	distinct    bool
-	tables      []string
-	selectCols  []string
-	joinOptions []JoinOption
+	args    *Args
+	forWhat string
+
+	order       string
+	havingExprs []string
 	joinTables  []string
 	joinExprs   [][]string
 	whereExprs  []string
-	havingExprs []string
+	joinOptions []JoinOption
 	groupByCols []string
 	orderByCols []string
-	order       string
+	selectCols  []string
+	tables      []string
 	limit       int
 	offset      int
-	forWhat     string
 
-	args *Args
+	distinct bool
 }
 
 // NewSelectBuilder creates a new SELECT builder.
